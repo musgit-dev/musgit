@@ -11,7 +11,7 @@ const (
 )
 
 type Practice struct {
-	StartDate time.Time
-	EndDate   time.Time
-	Progress  PracticeProgressEvalutation
+	StartDate time.Time                   `json:"start_date"`
+	EndDate   time.Time                   `json:"end_date"`
+	Progress  PracticeProgressEvalutation `json:"progress"`
 }

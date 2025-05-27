@@ -16,17 +16,16 @@ const (
 )
 
 type Piece struct {
-	Name       string
-	Composer   Composer
-	Complexity PieceComplexity
-	State      PieceState
-	Practices  []Practice
+	ID         int64           `json:"id"`
+	Name       string          `json:"name"`
+	Complexity PieceComplexity `json:"complexity"`
+	State      PieceState      `json:"state"`
+	Practices  []Practice      `json:"practices"`
 }
 
-func NewPiece(name, composer string, complexity PieceComplexity) *Piece {
+func NewPiece(name string, complexity PieceComplexity) *Piece {
 	return &Piece{
 		Name:       name,
-		Composer:   Composer{Name: composer},
 		Complexity: complexity,
 	}
 }

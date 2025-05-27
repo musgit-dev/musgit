@@ -1,5 +1,5 @@
 package domain
 
 type Composer struct {
-	Name string
+	Name string `json:"name"`
 }
