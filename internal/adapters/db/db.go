@@ -13,9 +13,11 @@ type Composer struct {
 	gorm.Model
 	Name string
 }
+
 type Piece struct {
 	gorm.Model
 	Name            string
+	Composer        Composer
 	PieceComplexity domain.PieceComplexity
 	State           domain.PieceState
 	Practices       []Practice
@@ -81,6 +83,7 @@ func (a *Adapter) SavePiece(piece *domain.Piece) error {
 		})
 	}
 	pieceModel := Piece{
+		Composer:        Composer{Name: piece.Composer.Name},
 		Name:            piece.Name,
 		State:           piece.State,
 		PieceComplexity: piece.Complexity,

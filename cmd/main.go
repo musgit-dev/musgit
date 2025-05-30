@@ -15,7 +15,7 @@ func main() {
 	}
 
 	app := api.NewMusgitService(dbAdapter)
-	newPiece := domain.NewPiece("Invention #1", domain.Easy)
+	newPiece := domain.NewPiece("Invention #1", "Bach", domain.Easy)
 	_, err := app.StartPractice(*newPiece)
 	if err != nil {
 		log.Fatalf("Failed to start practice, error: %v", err)
