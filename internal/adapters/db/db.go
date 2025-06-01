@@ -72,7 +72,7 @@ func (a *Adapter) GetPiece(id int64) (domain.Piece, error) {
 	return piece, res.Error
 }
 
-func (a *Adapter) SavePiece(piece *domain.Piece) error {
+func (a *Adapter) AddPiece(piece *domain.Piece) (*domain.Piece, error) {
 	var practices []Practice
 
 	for _, v := range piece.Practices {
@@ -94,6 +94,6 @@ func (a *Adapter) SavePiece(piece *domain.Piece) error {
 	if res.Error == nil {
 		piece.ID = int64(pieceModel.ID)
 	}
-	return res.Error
+	return piece, res.Error
 
 }

@@ -31,3 +31,9 @@ func NewPiece(name, composer string, complexity PieceComplexity) *Piece {
 		Complexity: complexity,
 	}
 }
+
+func (p *Piece) StartPractice() (*Practice, error) {
+	practice := Practice{}
+	p.Practices = append(p.Practices, practice)
+	return &practice, nil
+}

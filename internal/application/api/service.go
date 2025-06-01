@@ -11,15 +11,30 @@ type MusgitService struct {
 
 func NewMusgitService(db ports.DBPort) *MusgitService {
 	return &MusgitService{db: db}
-
 }
 
-func (m *MusgitService) StartPractice(
-	piece domain.Piece,
+func (m *MusgitService) AddPiece(
+	name, composer string,
+	complexity domain.PieceComplexity,
 ) (domain.Piece, error) {
-	err := m.db.SavePiece(&piece)
+	piece := domain.NewPiece(name, composer, complexity)
+	piece, err := m.db.AddPiece(piece)
 	if err != nil {
 		return domain.Piece{}, err
 	}
-	return piece, nil
+	return *piece, nil
+}
+
+func (m *MusgitService) StartPractice(
+	pieceId int64,
+) (domain.Practice, error) {
+	piece, err := m.db.GetPiece(pieceId)
+	if err != nil {
+		return domain.Practice{}, err
+	}
+	practice, err := piece.StartPractice()
+	if err != nil {
+		return domain.Practice{}, err
+	}
+	return *practice, nil
 }
