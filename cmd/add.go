@@ -36,15 +36,16 @@ var addCmd = &cobra.Command{
 	Short: "Add new piece to DB",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		dbUri := viper.GetString("db-uri")
-		name := "test"
-		composer := "test"
-		complexity := domain.Easy
+		name := viper.GetString("name")
+		composer := viper.GetString("composer")
+		complexity := viper.GetInt64("complexity")
 
 		err := addPiece(
 			dbUri,
 			name,
 			composer,
-			complexity)
+			domain.PieceComplexity(complexity),
+		)
 		return err
 	},
 }
@@ -54,6 +55,10 @@ func init() {
 	addCmd.Flags().StringP("name", "n", "", "Name of the piece")
 	addCmd.Flags().StringP("composer", "c", "", "Name of Composer")
 	addCmd.Flags().Int64("complexity", 0, "Piece complexity")
+
+	viper.BindPFlag("name", addCmd.Flags().Lookup("name"))
+	viper.BindPFlag("composer", addCmd.Flags().Lookup("composer"))
+	viper.BindPFlag("complexity", addCmd.Flags().Lookup("complexity"))
 }
 
 func addPiece(
