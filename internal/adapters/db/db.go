@@ -1,6 +1,7 @@
 package db
 
 import (
+	"errors"
 	"fmt"
 	"musgit/internal/application/domain"
 	"time"
@@ -48,6 +49,12 @@ func NewAdapter(dbUrl string) (*Adapter, error) {
 	return &Adapter{db: db}, nil
 }
 
+func (a *Adapter) checkPiece(name string) bool {
+	var p Piece
+	res := a.db.Where("name = ?", name).First(&p)
+	return res.RowsAffected != 0
+}
+
 func (a *Adapter) GetPiece(id int64) (domain.Piece, error) {
 
 	var p Piece
@@ -73,6 +80,11 @@ func (a *Adapter) GetPiece(id int64) (domain.Piece, error) {
 }
 
 func (a *Adapter) AddPiece(piece *domain.Piece) (*domain.Piece, error) {
+
+	if a.checkPiece(piece.Name) {
+		return &domain.Piece{}, errors.New("Already exists")
+	}
+
 	var practices []Practice
 
 	for _, v := range piece.Practices {
