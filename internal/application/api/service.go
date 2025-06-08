@@ -36,5 +36,22 @@ func (m *MusgitService) StartPractice(
 	if err != nil {
 		return domain.Practice{}, err
 	}
-	return *practice, nil
+	practice, err = m.db.AddPractice(practice, pieceId)
+	return *practice, err
+}
+
+func (m *MusgitService) StopPractice(
+	pieceId int64,
+	evaluation int64,
+) error {
+	piece, err := m.db.GetPiece(pieceId)
+	if err != nil {
+		return err
+	}
+	practice, err := piece.StopPractice(evaluation)
+	if err != nil {
+		return err
+	}
+	err = m.db.UpdatePractice(practice)
+	return err
 }

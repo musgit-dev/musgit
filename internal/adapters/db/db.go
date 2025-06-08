@@ -120,5 +120,26 @@ func (a *Adapter) AddPiece(piece *domain.Piece) (*domain.Piece, error) {
 		piece.ID = int64(pieceModel.ID)
 	}
 	return piece, res.Error
+}
 
+func (a *Adapter) AddPractice(
+	practice *domain.Practice,
+	pieceId int64,
+) (*domain.Practice, error) {
+
+	practiceModel := Practice{
+		StartDate: practice.StartDate,
+		PieceId:   uint(pieceId),
+	}
+
+	res := a.db.Create(&practiceModel)
+	if res.Error == nil {
+		practice.ID = int64(practiceModel.ID)
+	}
+	return practice, res.Error
+}
+
+func (a *Adapter) UpdatePractice(practice *domain.Practice) error {
+	res := a.db.Save(practice)
+	return res.Error
 }

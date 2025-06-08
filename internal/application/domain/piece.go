@@ -1,5 +1,7 @@
 package domain
 
+import "time"
+
 type PieceComplexity int
 type PieceState int
 
@@ -33,7 +35,14 @@ func NewPiece(name, composer string, complexity PieceComplexity) *Piece {
 }
 
 func (p *Piece) StartPractice() (*Practice, error) {
-	practice := Practice{}
+	practice := Practice{StartDate: time.Now()}
 	p.Practices = append(p.Practices, practice)
 	return &practice, nil
+}
+
+func (p *Piece) StopPractice(evaluation int64) (*Practice, error) {
+	currentPractice := p.Practices[len(p.Practices)-1]
+	currentPractice.EndDate = time.Now()
+	currentPractice.Progress = PracticeProgressEvalutation(evaluation)
+	return &currentPractice, nil
 }

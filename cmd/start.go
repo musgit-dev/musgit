@@ -22,13 +22,41 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"log"
+	"musgit/internal/adapters/db"
+	"musgit/internal/application/api"
+	"strconv"
+
 	"github.com/spf13/cobra"
 )
 
-var practiceCmd = &cobra.Command{
-	Use: "practice",
+var startCmd = &cobra.Command{
+	Use:   "start <piece_id>",
+	Short: "Start practice of a specified piece",
+	Args:  cobra.ExactArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		pieceId, err := strconv.Atoi(args[0])
+		if err != nil {
+			log.Fatalf("Incorrect id: %s", args[0])
+		}
+
+		err = startPractice(int64(pieceId))
+		return err
+	},
 }
 
 func init() {
-	rootCmd.AddCommand(practiceCmd)
+	practiceCmd.AddCommand(startCmd)
+}
+
+func startPractice(pieceId int64) error {
+	dbAdapter, dbErr := db.NewAdapter("musgit.db")
+	if dbErr != nil {
+		log.Fatalf("Failed to init db, err: %v", dbErr)
+	}
+
+	app := api.NewMusgitService(dbAdapter)
+	practice, err := app.StartPractice(pieceId)
+	log.Printf("Started practice %d for piece %d", practice.ID, pieceId)
+	return err
 }
