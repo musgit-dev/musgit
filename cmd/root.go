@@ -22,9 +22,11 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var rootCmd = &cobra.Command{
@@ -40,4 +42,8 @@ func Execute() {
 
 func init() {
 	rootCmd.PersistentFlags().StringP("db-uri", "d", "", "DB with data")
+	err := viper.BindPFlag("db-uri", rootCmd.PersistentFlags().Lookup("db-uri"))
+	if err != nil {
+		fmt.Println("DB URI is not provided.")
+	}
 }
