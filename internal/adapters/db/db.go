@@ -55,6 +55,12 @@ func (a *Adapter) checkPiece(name string) bool {
 	return res.RowsAffected != 0
 }
 
+func (a *Adapter) checkComposer(name string) uint {
+	var c Composer
+	_ = a.db.Where("name = ?", name).First(&c)
+	return c.ID
+}
+
 func (a *Adapter) GetPiece(id int64) (domain.Piece, error) {
 
 	var p Piece
@@ -85,6 +91,8 @@ func (a *Adapter) AddPiece(piece *domain.Piece) (*domain.Piece, error) {
 		return &domain.Piece{}, errors.New("Already exists")
 	}
 
+	composerId := a.checkComposer(piece.Composer.Name)
+
 	var practices []Practice
 
 	for _, v := range piece.Practices {
@@ -95,11 +103,16 @@ func (a *Adapter) AddPiece(piece *domain.Piece) (*domain.Piece, error) {
 		})
 	}
 	pieceModel := Piece{
-		Composer:        Composer{Name: piece.Composer.Name},
 		Name:            piece.Name,
 		State:           piece.State,
 		PieceComplexity: piece.Complexity,
 		Practices:       practices,
+	}
+
+	if composerId != 0 {
+		pieceModel.ComposerId = composerId
+	} else {
+		pieceModel.Composer = Composer{Name: piece.Composer.Name}
 	}
 
 	res := a.db.Create(&pieceModel)
