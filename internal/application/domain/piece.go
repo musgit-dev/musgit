@@ -1,6 +1,8 @@
 package domain
 
-import "time"
+import (
+	"errors"
+)
 
 type PieceComplexity int
 type PieceState int
@@ -23,7 +25,7 @@ type Piece struct {
 	Name       string          `json:"name"`
 	Complexity PieceComplexity `json:"complexity"`
 	State      PieceState      `json:"state"`
-	Practices  []Practice      `json:"practices"`
+	Practices  []*Practice     `json:"practices"`
 }
 
 func NewPiece(name, composer string, complexity PieceComplexity) *Piece {
@@ -34,15 +36,33 @@ func NewPiece(name, composer string, complexity PieceComplexity) *Piece {
 	}
 }
 
-func (p *Piece) StartPractice() (*Practice, error) {
-	practice := Practice{StartDate: time.Now()}
-	p.Practices = append(p.Practices, practice)
-	return &practice, nil
+func (p *Piece) currentPractice() (*Practice, error) {
+	if len(p.Practices) == 0 {
+		return NewPractice(), errors.New("No practices")
+	}
+	pr := p.Practices[len(p.Practices)-1]
+	return pr, nil
 }
 
-func (p *Piece) StopPractice(evaluation int64) (*Practice, error) {
-	currentPractice := p.Practices[len(p.Practices)-1]
-	currentPractice.EndDate = time.Now()
-	currentPractice.Progress = PracticeProgressEvalutation(evaluation)
-	return &currentPractice, nil
+func (p *Piece) StartPractice() (*Practice, error) {
+	pr, err := p.currentPractice()
+	if err == nil && pr.Active() {
+		return pr, errors.New("You have an active practices.")
+	}
+	p.Practices = append(p.Practices, pr)
+	return pr, nil
+}
+
+func (p *Piece) StopPractice(
+	evaluation PracticeProgressEvalutation,
+) (*Practice, error) {
+	pr, err := p.currentPractice()
+	if err != nil {
+		return pr, err
+	}
+	if pr.Completed() {
+		return pr, errors.New("Practice has already been completed.")
+	}
+	err = pr.Complete(evaluation)
+	return pr, err
 }

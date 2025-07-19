@@ -25,6 +25,7 @@ import (
 	"log"
 	"musgit/internal/adapters/db"
 	"musgit/internal/application/api"
+	"musgit/internal/application/domain"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -39,9 +40,9 @@ var stopCmd = &cobra.Command{
 			log.Fatalf("Incorrect id: %s", args[0])
 		}
 
-		evaluation := 0
+		evaluation := domain.Normal
 
-		err = stopPractice(int64(pieceId), int64(evaluation))
+		err = stopPractice(int64(pieceId), evaluation)
 		return err
 	},
 }
@@ -50,7 +51,10 @@ func init() {
 	practiceCmd.AddCommand(stopCmd)
 }
 
-func stopPractice(pieceId int64, evaluation int64) error {
+func stopPractice(
+	pieceId int64,
+	evaluation domain.PracticeProgressEvalutation,
+) error {
 	dbAdapter, dbErr := db.NewAdapter("musgit.db")
 	if dbErr != nil {
 		log.Fatalf("Failed to init db, err: %v", dbErr)

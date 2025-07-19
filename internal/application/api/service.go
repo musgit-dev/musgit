@@ -42,7 +42,7 @@ func (m *MusgitService) StartPractice(
 
 func (m *MusgitService) StopPractice(
 	pieceId int64,
-	evaluation int64,
+	evaluation domain.PracticeProgressEvalutation,
 ) error {
 	piece, err := m.db.GetPiece(pieceId)
 	if err != nil {

@@ -1,19 +1,18 @@
-package domain_test
+package domain
 
 import (
-	"musgit/internal/application/domain"
 	"testing"
 )
 
 func TestLesson(t *testing.T) {
 
-	lesson := domain.NewLesson()
+	lesson := NewLesson()
 
 	if lesson.StartDate.IsZero() {
 		t.Errorf("lesson not started")
 	}
 
-	if lesson.State != domain.LessonActive {
+	if lesson.State != LessonActive {
 		t.Errorf("Expected lesson to be Active")
 	}
 	if !lesson.EndDate.IsZero() {
@@ -21,12 +20,12 @@ func TestLesson(t *testing.T) {
 	}
 
 	lesson.Pause()
-	if lesson.State != domain.LessonPaused {
+	if lesson.State != LessonPaused {
 		t.Errorf("Expected lesson to be Paused")
 	}
 
 	lesson.Resume()
-	if lesson.State != domain.LessonActive {
+	if lesson.State != LessonActive {
 		t.Errorf("Expected lesson to be Active again")
 	}
 
@@ -34,7 +33,7 @@ func TestLesson(t *testing.T) {
 	if lesson.EndDate.IsZero() {
 		t.Errorf("Lesson not completed")
 	}
-	if lesson.State != domain.LessonCompleted {
+	if lesson.State != LessonCompleted {
 		t.Errorf("Expected lesson to be Completed")
 	}
 
