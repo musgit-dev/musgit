@@ -25,12 +25,19 @@ type Piece struct {
 	ComposerId      uint
 }
 
+type Lesson struct {
+	gorm.Model
+	StartDate time.Time
+	EndDate   time.Time
+}
+
 type Practice struct {
 	gorm.Model
 	StartDate time.Time
 	EndDate   time.Time
 	Progress  domain.PracticeProgressEvalutation
 	PieceId   uint
+	LessionId uint
 }
 
 type Adapter struct {
