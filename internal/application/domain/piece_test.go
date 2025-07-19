@@ -35,15 +35,15 @@ func TestPiece(t *testing.T) {
 	}
 
 	// Complete practice
-	practice, _ = piece.StopPractice(Normal)
+	practice, _ = piece.StopPractice(PracticeProgressNormal)
 	if practice.EndDate.IsZero() {
 		t.Fatal("Practice should have ended")
 	}
-	if practice.Progress != Normal {
+	if practice.Progress != PracticeProgressNormal {
 		t.Fatal("Practice evaluation mismatch")
 	}
 
-	_, err = piece.StopPractice(Normal)
+	_, err = piece.StopPractice(PracticeProgressNormal)
 	if err == nil {
 		t.Fatal("Not allowed to complete not started practice")
 	}

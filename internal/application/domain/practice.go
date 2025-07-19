@@ -8,9 +8,9 @@ import (
 type PracticeProgressEvalutation int
 
 const (
-	Bad PracticeProgressEvalutation = iota
-	Normal
-	Good
+	PracticeProgressBad PracticeProgressEvalutation = iota
+	PracticeProgressNormal
+	PracticeProgressGood
 )
 
 type Practice struct {

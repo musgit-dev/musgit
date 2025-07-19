@@ -8,10 +8,10 @@ type PieceComplexity int
 type PieceState int
 
 const (
-	Unknown PieceComplexity = iota
-	Easy
-	Mid
-	Hard
+	PieceComplexityUnknown PieceComplexity = iota
+	PieceComplexityEasy
+	PieceComplexityMid
+	PieceComplexityHard
 )
 
 const (

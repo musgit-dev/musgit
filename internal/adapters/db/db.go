@@ -73,10 +73,10 @@ func (a *Adapter) GetPiece(id int64) (domain.Piece, error) {
 	var p Piece
 
 	res := a.db.First(&p, id)
-	var practices []domain.Practice
+	var practices []*domain.Practice
 
 	for _, v := range p.Practices {
-		practices = append(practices, domain.Practice{
+		practices = append(practices, &domain.Practice{
 			StartDate: v.StartDate,
 			EndDate:   v.EndDate,
 			Progress:  v.Progress,

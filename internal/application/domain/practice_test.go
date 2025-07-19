@@ -11,7 +11,7 @@ func TestPractice(t *testing.T) {
 		t.Fatal("Practice should be active")
 	}
 
-	err := p.Complete(Normal)
+	err := p.Complete(PracticeProgressNormal)
 	if err != nil {
 		t.Fatal(err)
 	}

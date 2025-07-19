@@ -40,7 +40,7 @@ var stopCmd = &cobra.Command{
 			log.Fatalf("Incorrect id: %s", args[0])
 		}
 
-		evaluation := domain.Normal
+		evaluation := domain.PracticeProgressNormal
 
 		err = stopPractice(int64(pieceId), evaluation)
 		return err
