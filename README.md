@@ -1,1 +1,1 @@
-# Musgit implementation via Go
+# Musgit library

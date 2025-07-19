@@ -1,10 +1,10 @@
 package ports
 
 import (
-	"context"
 	"musgit/internal/application/domain"
 )
 
 type APIPort interface {
-	StartPractice(ctx context.Context, piece domain.Piece)
+	AddPiece(name, composer string, complexity domain.PieceComplexity)
+	PracticePiece(piece domain.Piece)
 }

@@ -37,7 +37,7 @@ type Practice struct {
 	EndDate   time.Time
 	Progress  domain.PracticeProgressEvalutation
 	PieceId   uint
-	LessionId uint
+	LessonId  uint
 }
 
 type Adapter struct {
@@ -49,7 +49,7 @@ func NewAdapter(dbUrl string) (*Adapter, error) {
 	if openErr != nil {
 		return nil, fmt.Errorf("Db connection error: %v", openErr)
 	}
-	if err := db.AutoMigrate(&Composer{}, &Piece{}, &Practice{}); err != nil {
+	if err := db.AutoMigrate(&Composer{}, &Piece{}, &Practice{}, &Lesson{}); err != nil {
 		return nil, fmt.Errorf("Db migration error: %v", err)
 	}
 
@@ -92,6 +92,43 @@ func (a *Adapter) GetPiece(id int64) (domain.Piece, error) {
 	return piece, res.Error
 }
 
+func (a *Adapter) AddLesson(l *domain.Lesson) (*domain.Lesson, error) {
+	lessonModel := Lesson{
+		StartDate: l.StartDate,
+		EndDate:   l.EndDate,
+	}
+	res := a.db.Create(&lessonModel)
+	if res.Error == nil {
+		l.ID = int64(lessonModel.ID)
+	}
+	return l, res.Error
+}
+
+func (a *Adapter) GetLesson(id int64) (domain.Lesson, error) {
+
+	var l Lesson
+
+	res := a.db.First(&l, id)
+
+	lesson := domain.Lesson{
+		ID:        int64(l.ID),
+		StartDate: l.StartDate,
+		EndDate:   l.EndDate,
+	}
+	return lesson, res.Error
+}
+
+func (a *Adapter) GetLessons() []domain.Lesson {
+	var lessons []domain.Lesson
+	a.db.Find(&lessons)
+	return lessons
+}
+
+func (a *Adapter) UpdateLesson(l *domain.Lesson) error {
+	res := a.db.Save(l)
+	return res.Error
+}
+
 func (a *Adapter) AddPiece(piece *domain.Piece) (*domain.Piece, error) {
 
 	if a.checkPiece(piece.Name) {
@@ -129,9 +166,20 @@ func (a *Adapter) AddPiece(piece *domain.Piece) (*domain.Piece, error) {
 	return piece, res.Error
 }
 
+func (a *Adapter) GetPieces() []domain.Piece {
+	var pieces []domain.Piece
+	a.db.Find(&pieces)
+	return pieces
+}
+
+func (a *Adapter) UpdatePiece(p *domain.Piece) error {
+	res := a.db.Save(p)
+	return res.Error
+}
+
 func (a *Adapter) AddPractice(
 	practice *domain.Practice,
-	pieceId int64,
+	pieceId, lessonId int64,
 ) (*domain.Practice, error) {
 
 	practiceModel := Practice{
@@ -144,6 +192,28 @@ func (a *Adapter) AddPractice(
 		practice.ID = int64(practiceModel.ID)
 	}
 	return practice, res.Error
+}
+
+func (a *Adapter) GetPractice(id int64) (domain.Practice, error) {
+
+	var p Practice
+
+	res := a.db.First(&p, id)
+
+	lesson := domain.Practice{
+		ID:        int64(p.ID),
+		StartDate: p.StartDate,
+		EndDate:   p.EndDate,
+		Progress:  p.Progress,
+		LessonID:  int64(p.LessonId),
+	}
+	return lesson, res.Error
+}
+
+func (a *Adapter) GetPractices() []domain.Practice {
+	var practices []domain.Practice
+	a.db.Find(&practices)
+	return practices
 }
 
 func (a *Adapter) UpdatePractice(practice *domain.Practice) error {
