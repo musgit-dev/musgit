@@ -20,8 +20,7 @@ type Lesson struct {
 }
 
 func NewLesson() *Lesson {
-	lesson := Lesson{StartDate: time.Now()}
-	lesson.State = LessonActive
+	lesson := Lesson{StartDate: time.Now(), State: LessonActive}
 	return &lesson
 }
 
