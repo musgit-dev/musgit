@@ -10,6 +10,7 @@ type DBPort interface {
 	GetPieces() []domain.Piece
 	// Lesson
 	AddLesson(l *domain.Lesson) (*domain.Lesson, error)
+	GetLastLesson() (domain.Lesson, error)
 	GetLesson(id int64) (domain.Lesson, error)
 	GetLessons() []domain.Lesson
 	UpdateLesson(l *domain.Lesson) error

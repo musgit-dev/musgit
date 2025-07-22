@@ -27,8 +27,10 @@ type Piece struct {
 
 type Lesson struct {
 	gorm.Model
+	State     domain.LessonState
 	StartDate time.Time
 	EndDate   time.Time
+	Comment   string
 }
 
 type Practice struct {
@@ -109,6 +111,20 @@ func (a *Adapter) GetLesson(id int64) (domain.Lesson, error) {
 	var l Lesson
 
 	res := a.db.First(&l, id)
+
+	lesson := domain.Lesson{
+		ID:        int64(l.ID),
+		StartDate: l.StartDate,
+		EndDate:   l.EndDate,
+	}
+	return lesson, res.Error
+}
+
+func (a *Adapter) GetLastLesson() (domain.Lesson, error) {
+
+	var l Lesson
+
+	res := a.db.Last(&l)
 
 	lesson := domain.Lesson{
 		ID:        int64(l.ID),

@@ -28,6 +28,45 @@ func (m *MusgitService) StartLesson() (*domain.Lesson, error) {
 	return lesson, nil
 }
 
+func (m *MusgitService) PauseCurrentLesson() error {
+	lesson, err := m.db.GetLastLesson()
+	if err != nil {
+		return err
+	}
+	lesson.Pause()
+	err = m.db.UpdateLesson(&lesson)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MusgitService) ResumeCurrentLesson() error {
+	lesson, err := m.db.GetLastLesson()
+	if err != nil {
+		return err
+	}
+	lesson.Resume()
+	err = m.db.UpdateLesson(&lesson)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MusgitService) StopCurrentLesson() error {
+	lesson, err := m.db.GetLastLesson()
+	if err != nil {
+		return err
+	}
+	lesson.Finish()
+	err = m.db.UpdateLesson(&lesson)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (m *MusgitService) GetLessons() []domain.Lesson {
 	return m.db.GetLessons()
 }

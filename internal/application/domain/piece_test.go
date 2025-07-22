@@ -7,7 +7,7 @@ import (
 func TestPiece(t *testing.T) {
 
 	// New practice
-	piece := NewPiece("test", "test composer", Easy)
+	piece := NewPiece("test", "test composer", PieceComplexityEasy)
 
 	if len(piece.Practices) != 0 {
 		t.Fatal("Unexpected practices")
