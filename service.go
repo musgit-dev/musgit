@@ -1,6 +1,7 @@
 package musgit
 
 import (
+	"fmt"
 	"log"
 	"musgit/internal/adapters/db"
 	"musgit/internal/application/domain"
@@ -69,6 +70,18 @@ func (m *MusgitService) StopCurrentLesson() error {
 
 func (m *MusgitService) GetLessons() []domain.Lesson {
 	return m.db.GetLessons()
+}
+
+func (m *MusgitService) GetPieces() []domain.Piece {
+	return m.db.GetPieces()
+}
+
+func (m *MusgitService) GetPiece(id int64) (domain.Piece, error) {
+	piece, err := m.db.GetPiece(id)
+	if err != nil {
+		return domain.Piece{}, fmt.Errorf("Unknown piece id: %d", id)
+	}
+	return piece, nil
 }
 
 func (m *MusgitService) AddPiece(
