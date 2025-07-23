@@ -1,6 +1,6 @@
 package ports
 
-import "musgit/internal/application/domain"
+import "github.com/musgit-dev/musgit/internal/application/domain"
 
 type DBPort interface {
 	// Piece

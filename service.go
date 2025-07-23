@@ -3,9 +3,9 @@ package musgit
 import (
 	"fmt"
 	"log"
-	"musgit/internal/adapters/db"
-	"musgit/internal/application/domain"
-	"musgit/internal/ports"
+	"github.com/musgit-dev/musgit/internal/adapters/db"
+	"github.com/musgit-dev/musgit/internal/application/domain"
+	"github.com/musgit-dev/musgit/internal/ports"
 )
 
 type MusgitService struct {

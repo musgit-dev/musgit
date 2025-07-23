@@ -1,7 +1,7 @@
 package ports
 
 import (
-	"musgit/internal/application/domain"
+	"github.com/musgit-dev/musgit/internal/application/domain"
 )
 
 type APIPort interface {

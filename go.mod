@@ -1,4 +1,4 @@
-module musgit
+module github.com/musgit-dev/musgit
 
 go 1.24.2
 

@@ -3,7 +3,7 @@ package db
 import (
 	"errors"
 	"fmt"
-	"musgit/internal/application/domain"
+	"github.com/musgit-dev/musgit/internal/application/domain"
 	"time"
 
 	"gorm.io/driver/sqlite"
