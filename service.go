@@ -3,9 +3,10 @@ package musgit
 import (
 	"fmt"
 	"log"
+
 	"github.com/musgit-dev/musgit/internal/adapters/db"
-	"github.com/musgit-dev/musgit/internal/application/domain"
 	"github.com/musgit-dev/musgit/internal/ports"
+	"github.com/musgit-dev/musgit/models"
 )
 
 type MusgitService struct {
@@ -20,11 +21,11 @@ func NewMusgitService(dbUri string) *MusgitService {
 	return &MusgitService{db: dbAdapter}
 }
 
-func (m *MusgitService) StartLesson() (*domain.Lesson, error) {
-	lesson := domain.NewLesson()
+func (m *MusgitService) StartLesson() (*models.Lesson, error) {
+	lesson := models.NewLesson()
 	lesson, err := m.db.AddLesson(lesson)
 	if err != nil {
-		return &domain.Lesson{}, err
+		return &models.Lesson{}, err
 	}
 	return lesson, nil
 }
@@ -68,30 +69,30 @@ func (m *MusgitService) StopCurrentLesson() error {
 	return nil
 }
 
-func (m *MusgitService) GetLessons() []domain.Lesson {
+func (m *MusgitService) GetLessons() []models.Lesson {
 	return m.db.GetLessons()
 }
 
-func (m *MusgitService) GetPieces() []domain.Piece {
+func (m *MusgitService) GetPieces() []models.Piece {
 	return m.db.GetPieces()
 }
 
-func (m *MusgitService) GetPiece(id int64) (domain.Piece, error) {
+func (m *MusgitService) GetPiece(id int64) (models.Piece, error) {
 	piece, err := m.db.GetPiece(id)
 	if err != nil {
-		return domain.Piece{}, fmt.Errorf("Unknown piece id: %d", id)
+		return models.Piece{}, fmt.Errorf("Unknown piece id: %d", id)
 	}
 	return piece, nil
 }
 
 func (m *MusgitService) AddPiece(
 	name, composer string,
-	complexity domain.PieceComplexity,
-) (domain.Piece, error) {
-	piece := domain.NewPiece(name, composer, complexity)
+	complexity models.PieceComplexity,
+) (models.Piece, error) {
+	piece := models.NewPiece(name, composer, complexity)
 	piece, err := m.db.AddPiece(piece)
 	if err != nil {
-		return domain.Piece{}, err
+		return models.Piece{}, err
 	}
 	return *piece, nil
 }
@@ -99,14 +100,14 @@ func (m *MusgitService) AddPiece(
 func (m *MusgitService) PracticePiece(
 	pieceId int64,
 	lessonId int64,
-) (domain.Practice, error) {
+) (models.Practice, error) {
 	piece, err := m.db.GetPiece(pieceId)
 	if err != nil {
-		return domain.Practice{}, err
+		return models.Practice{}, err
 	}
 	practice, err := piece.StartPractice()
 	if err != nil {
-		return domain.Practice{}, err
+		return models.Practice{}, err
 	}
 	practice, err = m.db.AddPractice(practice, pieceId, lessonId)
 	return *practice, err

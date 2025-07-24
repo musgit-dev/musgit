@@ -3,9 +3,9 @@ package db
 import (
 	"errors"
 	"fmt"
-	"github.com/musgit-dev/musgit/internal/application/domain"
 	"time"
 
+	"github.com/musgit-dev/musgit/models"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -19,15 +19,15 @@ type Piece struct {
 	gorm.Model
 	Name            string
 	Composer        Composer
-	PieceComplexity domain.PieceComplexity
-	State           domain.PieceState
+	PieceComplexity models.PieceComplexity
+	State           models.PieceState
 	Practices       []Practice
 	ComposerId      uint
 }
 
 type Lesson struct {
 	gorm.Model
-	State     domain.LessonState
+	State     models.LessonState
 	StartDate time.Time
 	EndDate   time.Time
 	Comment   string
@@ -37,7 +37,7 @@ type Practice struct {
 	gorm.Model
 	StartDate time.Time
 	EndDate   time.Time
-	Progress  domain.PracticeProgressEvalutation
+	Progress  models.PracticeProgressEvalutation
 	PieceId   uint
 	LessonId  uint
 }
@@ -70,21 +70,21 @@ func (a *Adapter) checkComposer(name string) uint {
 	return c.ID
 }
 
-func (a *Adapter) GetPiece(id int64) (domain.Piece, error) {
+func (a *Adapter) GetPiece(id int64) (models.Piece, error) {
 
 	var p Piece
 
 	res := a.db.First(&p, id)
-	var practices []*domain.Practice
+	var practices []*models.Practice
 
 	for _, v := range p.Practices {
-		practices = append(practices, &domain.Practice{
+		practices = append(practices, &models.Practice{
 			StartDate: v.StartDate,
 			EndDate:   v.EndDate,
 			Progress:  v.Progress,
 		})
 	}
-	piece := domain.Piece{
+	piece := models.Piece{
 		ID:         int64(p.ID),
 		Name:       p.Name,
 		State:      p.State,
@@ -94,7 +94,7 @@ func (a *Adapter) GetPiece(id int64) (domain.Piece, error) {
 	return piece, res.Error
 }
 
-func (a *Adapter) AddLesson(l *domain.Lesson) (*domain.Lesson, error) {
+func (a *Adapter) AddLesson(l *models.Lesson) (*models.Lesson, error) {
 	lessonModel := Lesson{
 		StartDate: l.StartDate,
 		EndDate:   l.EndDate,
@@ -106,13 +106,13 @@ func (a *Adapter) AddLesson(l *domain.Lesson) (*domain.Lesson, error) {
 	return l, res.Error
 }
 
-func (a *Adapter) GetLesson(id int64) (domain.Lesson, error) {
+func (a *Adapter) GetLesson(id int64) (models.Lesson, error) {
 
 	var l Lesson
 
 	res := a.db.First(&l, id)
 
-	lesson := domain.Lesson{
+	lesson := models.Lesson{
 		ID:        int64(l.ID),
 		StartDate: l.StartDate,
 		EndDate:   l.EndDate,
@@ -120,13 +120,13 @@ func (a *Adapter) GetLesson(id int64) (domain.Lesson, error) {
 	return lesson, res.Error
 }
 
-func (a *Adapter) GetLastLesson() (domain.Lesson, error) {
+func (a *Adapter) GetLastLesson() (models.Lesson, error) {
 
 	var l Lesson
 
 	res := a.db.Last(&l)
 
-	lesson := domain.Lesson{
+	lesson := models.Lesson{
 		ID:        int64(l.ID),
 		StartDate: l.StartDate,
 		EndDate:   l.EndDate,
@@ -134,21 +134,21 @@ func (a *Adapter) GetLastLesson() (domain.Lesson, error) {
 	return lesson, res.Error
 }
 
-func (a *Adapter) GetLessons() []domain.Lesson {
-	var lessons []domain.Lesson
+func (a *Adapter) GetLessons() []models.Lesson {
+	var lessons []models.Lesson
 	a.db.Find(&lessons)
 	return lessons
 }
 
-func (a *Adapter) UpdateLesson(l *domain.Lesson) error {
+func (a *Adapter) UpdateLesson(l *models.Lesson) error {
 	res := a.db.Save(l)
 	return res.Error
 }
 
-func (a *Adapter) AddPiece(piece *domain.Piece) (*domain.Piece, error) {
+func (a *Adapter) AddPiece(piece *models.Piece) (*models.Piece, error) {
 
 	if a.checkPiece(piece.Name) {
-		return &domain.Piece{}, errors.New("Already exists")
+		return &models.Piece{}, errors.New("Already exists")
 	}
 
 	composerId := a.checkComposer(piece.Composer.Name)
@@ -182,21 +182,21 @@ func (a *Adapter) AddPiece(piece *domain.Piece) (*domain.Piece, error) {
 	return piece, res.Error
 }
 
-func (a *Adapter) GetPieces() []domain.Piece {
-	var pieces []domain.Piece
+func (a *Adapter) GetPieces() []models.Piece {
+	var pieces []models.Piece
 	a.db.Find(&pieces)
 	return pieces
 }
 
-func (a *Adapter) UpdatePiece(p *domain.Piece) error {
+func (a *Adapter) UpdatePiece(p *models.Piece) error {
 	res := a.db.Save(p)
 	return res.Error
 }
 
 func (a *Adapter) AddPractice(
-	practice *domain.Practice,
+	practice *models.Practice,
 	pieceId, lessonId int64,
-) (*domain.Practice, error) {
+) (*models.Practice, error) {
 
 	practiceModel := Practice{
 		StartDate: practice.StartDate,
@@ -210,13 +210,13 @@ func (a *Adapter) AddPractice(
 	return practice, res.Error
 }
 
-func (a *Adapter) GetPractice(id int64) (domain.Practice, error) {
+func (a *Adapter) GetPractice(id int64) (models.Practice, error) {
 
 	var p Practice
 
 	res := a.db.First(&p, id)
 
-	lesson := domain.Practice{
+	lesson := models.Practice{
 		ID:        int64(p.ID),
 		StartDate: p.StartDate,
 		EndDate:   p.EndDate,
@@ -226,13 +226,13 @@ func (a *Adapter) GetPractice(id int64) (domain.Practice, error) {
 	return lesson, res.Error
 }
 
-func (a *Adapter) GetPractices() []domain.Practice {
-	var practices []domain.Practice
+func (a *Adapter) GetPractices() []models.Practice {
+	var practices []models.Practice
 	a.db.Find(&practices)
 	return practices
 }
 
-func (a *Adapter) UpdatePractice(practice *domain.Practice) error {
+func (a *Adapter) UpdatePractice(practice *models.Practice) error {
 	res := a.db.Save(practice)
 	return res.Error
 }

@@ -1,25 +1,25 @@
 package ports
 
-import "github.com/musgit-dev/musgit/internal/application/domain"
+import "github.com/musgit-dev/musgit/models"
 
 type DBPort interface {
 	// Piece
-	AddPiece(piece *domain.Piece) (*domain.Piece, error)
-	GetPiece(id int64) (domain.Piece, error)
-	UpdatePiece(p *domain.Piece) error
-	GetPieces() []domain.Piece
+	AddPiece(piece *models.Piece) (*models.Piece, error)
+	GetPiece(id int64) (models.Piece, error)
+	UpdatePiece(p *models.Piece) error
+	GetPieces() []models.Piece
 	// Lesson
-	AddLesson(l *domain.Lesson) (*domain.Lesson, error)
-	GetLastLesson() (domain.Lesson, error)
-	GetLesson(id int64) (domain.Lesson, error)
-	GetLessons() []domain.Lesson
-	UpdateLesson(l *domain.Lesson) error
+	AddLesson(l *models.Lesson) (*models.Lesson, error)
+	GetLastLesson() (models.Lesson, error)
+	GetLesson(id int64) (models.Lesson, error)
+	GetLessons() []models.Lesson
+	UpdateLesson(l *models.Lesson) error
 	// Practice
 	AddPractice(
-		practice *domain.Practice,
+		practice *models.Practice,
 		pieceId, lessonId int64,
-	) (*domain.Practice, error)
-	UpdatePractice(practice *domain.Practice) error
-	GetPractice(id int64) (domain.Practice, error)
-	GetPractices() []domain.Practice
+	) (*models.Practice, error)
+	UpdatePractice(practice *models.Practice) error
+	GetPractice(id int64) (models.Practice, error)
+	GetPractices() []models.Practice
 }
