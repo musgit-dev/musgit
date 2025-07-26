@@ -12,17 +12,19 @@ import (
 
 type Composer struct {
 	gorm.Model
-	Name string
+	ID   uint   `gorm:"primary_key"`
+	Name string `gorm:"primary_key"`
 }
 
 type Piece struct {
 	gorm.Model
+	ID              uint `gorm:"primary_key"`
 	Name            string
+	ComposerID      uint
 	Composer        Composer
 	PieceComplexity models.PieceComplexity
 	State           models.PieceState
 	Practices       []Practice
-	ComposerId      uint
 }
 
 type Lesson struct {
@@ -74,7 +76,7 @@ func (a *Adapter) GetPiece(id int64) (models.Piece, error) {
 
 	var p Piece
 
-	res := a.db.First(&p, id)
+	res := a.db.Joins("Composer").First(&p, id)
 	var practices []*models.Practice
 
 	for _, v := range p.Practices {
@@ -86,6 +88,7 @@ func (a *Adapter) GetPiece(id int64) (models.Piece, error) {
 	}
 	piece := models.Piece{
 		ID:         int64(p.ID),
+		Composer:   models.Composer{Name: p.Composer.Name},
 		Name:       p.Name,
 		State:      p.State,
 		Complexity: p.PieceComplexity,
@@ -170,7 +173,7 @@ func (a *Adapter) AddPiece(piece *models.Piece) (*models.Piece, error) {
 	}
 
 	if composerId != 0 {
-		pieceModel.ComposerId = composerId
+		pieceModel.ComposerID = composerId
 	} else {
 		pieceModel.Composer = Composer{Name: piece.Composer.Name}
 	}
