@@ -6,7 +6,7 @@ import (
 
 func TestPractice(t *testing.T) {
 
-	p := NewPractice()
+	p := NewPractice(0)
 	if !p.Active() {
 		t.Fatal("Practice should be active")
 	}

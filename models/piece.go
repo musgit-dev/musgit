@@ -38,7 +38,7 @@ func NewPiece(name, composer string, complexity PieceComplexity) *Piece {
 
 func (p *Piece) currentPractice() (*Practice, error) {
 	if len(p.Practices) == 0 {
-		return NewPractice(), errors.New("No practices")
+		return NewPractice(p.ID), errors.New("No practices")
 	}
 	pr := p.Practices[len(p.Practices)-1]
 	return pr, nil

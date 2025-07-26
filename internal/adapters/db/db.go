@@ -29,6 +29,7 @@ type Piece struct {
 
 type Lesson struct {
 	gorm.Model
+	ID        uint `gorm:"primary_key"`
 	State     models.LessonState
 	StartDate time.Time
 	EndDate   time.Time
@@ -37,11 +38,14 @@ type Lesson struct {
 
 type Practice struct {
 	gorm.Model
+	ID        uint `gorm:"primary_key"`
 	StartDate time.Time
 	EndDate   time.Time
 	Progress  models.PracticeProgressEvalutation
-	PieceId   uint
-	LessonId  uint
+	PieceID   uint
+	Piece     Piece
+	LessonID  uint
+	Lesson    Lesson
 }
 
 type Adapter struct {
@@ -209,12 +213,12 @@ func (a *Adapter) UpdatePiece(p *models.Piece) error {
 
 func (a *Adapter) AddPractice(
 	practice *models.Practice,
-	pieceId, lessonId int64,
 ) (*models.Practice, error) {
 
 	practiceModel := Practice{
 		StartDate: practice.StartDate,
-		PieceId:   uint(pieceId),
+		PieceID:   uint(practice.PieceID),
+		LessonID:  uint(practice.LessonID),
 	}
 
 	res := a.db.Create(&practiceModel)
@@ -235,7 +239,7 @@ func (a *Adapter) GetPractice(id int64) (models.Practice, error) {
 		StartDate: p.StartDate,
 		EndDate:   p.EndDate,
 		Progress:  p.Progress,
-		LessonID:  int64(p.LessonId),
+		LessonID:  int64(p.LessonID),
 	}
 	return lesson, res.Error
 }

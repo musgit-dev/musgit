@@ -15,10 +15,7 @@ type DBPort interface {
 	GetLessons() []models.Lesson
 	UpdateLesson(l *models.Lesson) error
 	// Practice
-	AddPractice(
-		practice *models.Practice,
-		pieceId, lessonId int64,
-	) (*models.Practice, error)
+	AddPractice(practice *models.Practice) (*models.Practice, error)
 	UpdatePractice(practice *models.Practice) error
 	GetPractice(id int64) (models.Practice, error)
 	GetPractices() []models.Practice

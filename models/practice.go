@@ -18,11 +18,12 @@ type Practice struct {
 	StartDate time.Time                   `json:"start_date"`
 	EndDate   time.Time                   `json:"end_date"`
 	Progress  PracticeProgressEvalutation `json:"progress"`
+	PieceID   int64                       `json:"piece_id"`
 	LessonID  int64                       `json:"lesson_id"`
 }
 
-func NewPractice() *Practice {
-	return &Practice{StartDate: time.Now()}
+func NewPractice(pieceId int64) *Practice {
+	return &Practice{PieceID: pieceId, StartDate: time.Now()}
 }
 
 func (p *Practice) Complete(
