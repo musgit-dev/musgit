@@ -186,8 +186,19 @@ func (a *Adapter) AddPiece(piece *models.Piece) (*models.Piece, error) {
 }
 
 func (a *Adapter) GetPieces() []models.Piece {
+	var ps []Piece
 	var pieces []models.Piece
-	a.db.Find(&pieces)
+	a.db.Joins("Composer").Find(&ps)
+	for _, p := range ps {
+		piece := models.Piece{
+			ID:         int64(p.ID),
+			Composer:   models.Composer{Name: p.Composer.Name},
+			Name:       p.Name,
+			State:      p.State,
+			Complexity: p.PieceComplexity,
+		}
+		pieces = append(pieces, piece)
+	}
 	return pieces
 }
 
