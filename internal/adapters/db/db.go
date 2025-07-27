@@ -48,6 +48,16 @@ type Practice struct {
 	Lesson    Lesson
 }
 
+type Warmup struct {
+	gorm.Model
+	ID        uint `gorm:"primary_key"`
+	StartDate time.Time
+	EndDate   time.Time
+	State     models.WarmupState
+	LessonID  uint
+	Lesson    Lesson
+}
+
 type Adapter struct {
 	db *gorm.DB
 }
@@ -57,7 +67,9 @@ func NewAdapter(dbUrl string) (*Adapter, error) {
 	if openErr != nil {
 		return nil, fmt.Errorf("Db connection error: %v", openErr)
 	}
-	if err := db.AutoMigrate(&Composer{}, &Piece{}, &Practice{}, &Lesson{}); err != nil {
+	if err := db.AutoMigrate(
+		&Composer{}, &Piece{}, &Practice{}, &Lesson{}, &Warmup{},
+	); err != nil {
 		return nil, fmt.Errorf("Db migration error: %v", err)
 	}
 
@@ -226,6 +238,41 @@ func (a *Adapter) AddPractice(
 		practice.ID = int64(practiceModel.ID)
 	}
 	return practice, res.Error
+}
+
+func (a *Adapter) AddWarmup(
+	w *models.Warmup,
+) error {
+
+	warmupModel := Warmup{
+		StartDate: w.StartDate,
+		LessonID:  uint(w.LessonID),
+	}
+
+	res := a.db.Create(&warmupModel)
+	if res.Error == nil {
+		w.ID = int64(warmupModel.ID)
+	}
+	return res.Error
+}
+
+func (a *Adapter) UpdateWarmup(warmup *models.Warmup) error {
+	res := a.db.Save(warmup)
+	return res.Error
+}
+
+func (a *Adapter) GetActiveWarmup() (*models.Warmup, error) {
+	var w Warmup
+
+	res := a.db.Last(&w).Where("state = 0")
+	if res.Error != nil {
+		return &models.Warmup{}, res.Error
+	}
+	warmup := models.Warmup{
+		ID:        int64(w.ID),
+		StartDate: w.StartDate,
+	}
+	return &warmup, res.Error
 }
 
 func (a *Adapter) GetPractice(id int64) (models.Practice, error) {

@@ -19,4 +19,7 @@ type DBPort interface {
 	UpdatePractice(practice *models.Practice) error
 	GetPractice(id int64) (models.Practice, error)
 	GetPractices() []models.Practice
+	AddWarmup(warmup *models.Warmup) error
+	UpdateWarmup(warmup *models.Warmup) error
+	GetActiveWarmup() (*models.Warmup, error)
 }
