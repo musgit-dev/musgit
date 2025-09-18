@@ -18,9 +18,9 @@ type Composer struct {
 
 type Piece struct {
 	gorm.Model
-	ID              uint `gorm:"primary_key"`
-	Name            string
-	ComposerID      uint
+	ID              uint   `gorm:"primary_key"`
+	Name            string `gorm:"uniqueIndex:piece_composer"`
+	ComposerID      int64  `gorm:"uniqueIndex:piece_composer"`
 	Composer        Composer
 	PieceComplexity models.PieceComplexity
 	State           models.PieceState
@@ -76,16 +76,17 @@ func NewAdapter(dbUrl string) (*Adapter, error) {
 	return &Adapter{db: db}, nil
 }
 
-func (a *Adapter) checkPiece(name string) bool {
+func (a *Adapter) checkPiece(name string, composerId int64) bool {
 	var p Piece
-	res := a.db.Where("name = ?", name).First(&p)
+	res := a.db.Where("name = ? AND composer_id = ?", name, composerId).
+		First(&p)
 	return res.RowsAffected != 0
 }
 
-func (a *Adapter) checkComposer(name string) uint {
+func (a *Adapter) checkComposer(name string) int64 {
 	var c Composer
 	_ = a.db.Where("name = ?", name).First(&c)
-	return c.ID
+	return int64(c.ID)
 }
 
 func (a *Adapter) GetPiece(id int64) (models.Piece, error) {
@@ -166,11 +167,10 @@ func (a *Adapter) UpdateLesson(l *models.Lesson) error {
 
 func (a *Adapter) AddPiece(piece *models.Piece) (*models.Piece, error) {
 
-	if a.checkPiece(piece.Name) {
+	composerId := a.checkComposer(piece.Composer.Name)
+	if a.checkPiece(piece.Name, composerId) {
 		return &models.Piece{}, errors.New("Already exists")
 	}
-
-	composerId := a.checkComposer(piece.Composer.Name)
 
 	var practices []Practice
 
