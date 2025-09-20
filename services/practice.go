@@ -20,7 +20,15 @@ func (s *PracticeService) Start(
 	if err != nil {
 		return &models.Practice{}, err
 	}
-	practice, err := piece.StartPractice()
+	lesson, err := s.db.GetLesson(lessonId)
+	if lessonId != 0 && err != nil {
+		return &models.Practice{}, models.ErrNotActiveLesson
+	}
+	if lessonId != 0 && lesson.State != models.LessonActive {
+		return &models.Practice{}, models.ErrNotActiveLesson
+	}
+
+	practice, err := piece.StartPractice(lessonId)
 	if err != nil {
 		return &models.Practice{}, err
 	}

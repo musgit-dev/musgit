@@ -14,7 +14,7 @@ func TestPiece(t *testing.T) {
 	}
 
 	// Start practice
-	practice, err := piece.StartPractice()
+	practice, err := piece.StartPractice(0)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -29,7 +29,7 @@ func TestPiece(t *testing.T) {
 		t.Fatal("Practice should have not ended")
 	}
 
-	_, err = piece.StartPractice()
+	_, err = piece.StartPractice(0)
 	if err == nil {
 		t.Fatal("Not allowed to create another practice")
 	}

@@ -119,8 +119,10 @@ func (a *Adapter) GetPiece(id int64) (models.Piece, error) {
 
 func (a *Adapter) AddLesson(l *models.Lesson) (*models.Lesson, error) {
 	lessonModel := Lesson{
+		State:     l.State,
 		StartDate: l.StartDate,
 		EndDate:   l.EndDate,
+		Comment:   l.Comment,
 	}
 	res := a.db.Create(&lessonModel)
 	if res.Error == nil {
@@ -137,8 +139,10 @@ func (a *Adapter) GetLesson(id int64) (models.Lesson, error) {
 
 	lesson := models.Lesson{
 		ID:        int64(l.ID),
+		State:     l.State,
 		StartDate: l.StartDate,
 		EndDate:   l.EndDate,
+		Comment:   l.Comment,
 	}
 	return lesson, res.Error
 }
@@ -151,8 +155,10 @@ func (a *Adapter) GetLastLesson() (models.Lesson, error) {
 
 	lesson := models.Lesson{
 		ID:        int64(l.ID),
+		State:     l.State,
 		StartDate: l.StartDate,
 		EndDate:   l.EndDate,
+		Comment:   l.Comment,
 	}
 	return lesson, res.Error
 }
