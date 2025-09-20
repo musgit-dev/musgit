@@ -22,5 +22,9 @@ func TestPractice(t *testing.T) {
 	if !p.Completed() {
 		t.Fatal("Practice should be completed")
 	}
+	err = p.Complete(PracticeProgressNormal)
+	if err != ErrCompletedPractice {
+		t.Fatal("Practice should not be completed")
+	}
 
 }

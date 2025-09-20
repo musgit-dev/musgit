@@ -5,6 +5,11 @@ import (
 	"time"
 )
 
+var (
+	ErrCompletedPractice = errors.New("Practice has already been completed.")
+	ErrNotActivePractice = errors.New("You don't have an active practice.")
+)
+
 type PracticeProgressEvalutation int
 
 const (
@@ -34,9 +39,7 @@ func (p *Practice) Complete(
 	evaluation PracticeProgressEvalutation,
 ) error {
 	if p.Completed() {
-		return errors.New(
-			"Practice has already been completed.",
-		)
+		return ErrCompletedPractice
 	}
 	p.EndDate = time.Now()
 	p.Progress = evaluation
