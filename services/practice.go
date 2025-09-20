@@ -1,6 +1,8 @@
 package services
 
 import (
+	"fmt"
+
 	"github.com/musgit-dev/musgit/internal/ports"
 	"github.com/musgit-dev/musgit/models"
 )
@@ -48,6 +50,8 @@ func (s *PracticeService) Stop(
 		return &models.Practice{}, err
 	}
 	err = s.db.UpdatePractice(practice)
+	pr, _ := s.db.GetPractice(practice.ID)
+	fmt.Println("Completed from dB:", pr.Completed())
 	return practice, err
 }
 

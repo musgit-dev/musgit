@@ -109,11 +109,12 @@ func (a *Adapter) GetPiece(id int64) (models.Piece, error) {
 
 	var p Piece
 
-	res := a.db.Joins("Composer").First(&p, id)
+	res := a.db.Joins("Composer").Preload("Practices").First(&p, id)
 	var practices []*models.Practice
 
 	for _, v := range p.Practices {
 		practices = append(practices, &models.Practice{
+			ID:        int64(v.ID),
 			StartDate: v.StartDate,
 			EndDate:   v.EndDate,
 			Progress:  v.Progress,

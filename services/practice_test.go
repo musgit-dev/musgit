@@ -27,12 +27,12 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		os.Exit(1)
 	}
-	fmt.Printf("Added piece %d", piece.ID)
+	fmt.Printf("Added piece %d\n", piece.ID)
 	lesson, err := lessonService.Start()
 	if err != nil {
 		os.Exit(1)
 	}
-	fmt.Printf("Started lesson %d", lesson.ID)
+	fmt.Printf("Started lesson %d\n", lesson.ID)
 
 	exitVal := m.Run()
 	os.Exit(exitVal)
@@ -49,6 +49,7 @@ func TestStart(t *testing.T) {
 	if lessonId := practice.LessonID; lessonId != 1 {
 		t.Fatalf("Incorrect lesson id, got %d", lessonId)
 	}
+
 	_, err = service.Start(1, 2)
 	if err != models.ErrNotActiveLesson {
 		t.Fatalf("Expected error %s, got %s", models.ErrNotActiveLesson, err)
@@ -57,4 +58,24 @@ func TestStart(t *testing.T) {
 	if err == models.ErrNotActiveLesson {
 		t.Fatalf("Unexpected error %s", err)
 	}
+}
+
+func TestStop(t *testing.T) {
+	service.Start(1, 0)
+	practice, err := service.Stop(1)
+	if err != nil {
+		t.Fatalf("Unexpected error %s", err)
+	}
+
+	if practice.Progress != models.PracticeProgressNormal {
+		t.Fatalf(
+			"Unexpected progress, expect %d, got %d",
+			models.PracticeProgressNormal,
+			practice.Progress,
+		)
+	}
+	// _, err = service.Stop(1)
+	// if err != models.ErrCompletedPractice {
+	// 	t.Fatal(err)
+	// }
 }
