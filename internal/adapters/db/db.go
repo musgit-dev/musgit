@@ -8,6 +8,7 @@ import (
 	"github.com/musgit-dev/musgit/models"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type Composer struct {
@@ -63,7 +64,9 @@ type Adapter struct {
 }
 
 func NewAdapter(dbUrl string) (*Adapter, error) {
-	db, openErr := gorm.Open(sqlite.Open(dbUrl), &gorm.Config{})
+	db, openErr := gorm.Open(sqlite.Open(dbUrl), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
 	if openErr != nil {
 		return nil, fmt.Errorf("Db connection error: %v", openErr)
 	}
