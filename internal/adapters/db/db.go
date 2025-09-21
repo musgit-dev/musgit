@@ -271,6 +271,20 @@ func (a *Adapter) UpdateWarmup(warmup *models.Warmup) error {
 	return res.Error
 }
 
+func (a *Adapter) GetWarmup(lessonId int64) (*models.Warmup, error) {
+	var w Warmup
+
+	res := a.db.Last(&w).Where("lesson_id = ?", lessonId)
+	if res.Error != nil {
+		return &models.Warmup{}, res.Error
+	}
+	warmup := models.Warmup{
+		ID:        int64(w.ID),
+		StartDate: w.StartDate,
+		State:     w.State,
+	}
+	return &warmup, res.Error
+}
 func (a *Adapter) GetActiveWarmup() (*models.Warmup, error) {
 	var w Warmup
 
@@ -281,6 +295,7 @@ func (a *Adapter) GetActiveWarmup() (*models.Warmup, error) {
 	warmup := models.Warmup{
 		ID:        int64(w.ID),
 		StartDate: w.StartDate,
+		State:     w.State,
 	}
 	return &warmup, res.Error
 }
