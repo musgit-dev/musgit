@@ -56,7 +56,12 @@ func (s *PracticeService) Stop(
 }
 
 func (s *PracticeService) Warmup(lessonId int64) (*models.Warmup, error) {
-	warmup := models.NewWarmup(lessonId)
+	warmup, err := s.db.GetWarmup(lessonId)
+	if err != nil {
+		warmup = models.NewWarmup(lessonId)
+	} else if warmup.State == models.WarmupActive {
+		return &models.Warmup{}, models.ErrWarmapStarted
+	}
 	if err := s.db.AddWarmup(warmup); err != nil {
 		return &models.Warmup{}, err
 	}
@@ -66,6 +71,10 @@ func (s *PracticeService) StopWarmup() (*models.Warmup, error) {
 	warmup, err := s.db.GetActiveWarmup()
 	if err != nil {
 		return &models.Warmup{}, err
+	}
+	err = warmup.Complete()
+	if err != nil {
+		return warmup, err
 	}
 	err = s.db.UpdateWarmup(warmup)
 	return warmup, err

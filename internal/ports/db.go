@@ -21,6 +21,7 @@ type DBPort interface {
 	GetPractices() []models.Practice
 	AddWarmup(warmup *models.Warmup) error
 	UpdateWarmup(warmup *models.Warmup) error
+	GetWarmup(lessonId int64) (*models.Warmup, error)
 	GetActiveWarmup() (*models.Warmup, error)
 	// User
 	AddUser(user *models.User) (*models.User, error)

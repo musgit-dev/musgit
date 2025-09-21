@@ -79,3 +79,27 @@ func TestStop(t *testing.T) {
 	// 	t.Fatal(err)
 	// }
 }
+
+func TestStartWarmup(t *testing.T) {
+	warmup, err := service.Warmup(1)
+	if err != nil {
+		t.Fatal("Unknown error", err)
+	}
+
+	if warmup.State != models.WarmupActive {
+		t.Fatal("Warmup should be active, got", warmup.State)
+	}
+	// warmup, err = service.Warmup(1)
+	// if err != models.ErrWarmapStarted {
+	// 	t.Fatalf("Expected error %s, got %s", models.ErrWarmapStarted, err)
+	// }
+
+	warmup, err = service.StopWarmup()
+	if err != nil {
+		t.Fatal("Unknown error", err)
+	}
+	if warmup.State != models.WarmupCompleted {
+		t.Fatal("Warmup should be completed, got", warmup.State)
+	}
+
+}
