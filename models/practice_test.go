@@ -6,7 +6,7 @@ import (
 
 func TestPractice(t *testing.T) {
 
-	p := NewPractice(0)
+	p := NewPractice(0, 0)
 	if !p.Active() {
 		t.Fatal("Practice should be active")
 	}
@@ -21,6 +21,10 @@ func TestPractice(t *testing.T) {
 	}
 	if !p.Completed() {
 		t.Fatal("Practice should be completed")
+	}
+	err = p.Complete(PracticeProgressNormal)
+	if err != ErrCompletedPractice {
+		t.Fatal("Practice should not be completed")
 	}
 
 }

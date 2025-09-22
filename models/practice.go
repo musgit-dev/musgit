@@ -5,6 +5,11 @@ import (
 	"time"
 )
 
+var (
+	ErrCompletedPractice = errors.New("Practice has already been completed.")
+	ErrNotActivePractice = errors.New("You don't have an active practice.")
+)
+
 type PracticeProgressEvalutation int
 
 const (
@@ -22,17 +27,19 @@ type Practice struct {
 	LessonID  int64                       `json:"lesson_id"`
 }
 
-func NewPractice(pieceId int64) *Practice {
-	return &Practice{PieceID: pieceId, StartDate: time.Now()}
+func NewPractice(pieceId, lessonId int64) *Practice {
+	return &Practice{
+		PieceID:   pieceId,
+		LessonID:  lessonId,
+		StartDate: time.Now(),
+	}
 }
 
 func (p *Practice) Complete(
 	evaluation PracticeProgressEvalutation,
 ) error {
 	if p.Completed() {
-		return errors.New(
-			"Practice has already been completed.",
-		)
+		return ErrCompletedPractice
 	}
 	p.EndDate = time.Now()
 	p.Progress = evaluation

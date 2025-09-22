@@ -1,8 +1,13 @@
 package models
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 type LessonState int
+
+var ErrNotActiveLesson = errors.New("No active lesson")
 
 const (
 	LessonScheduled LessonState = iota

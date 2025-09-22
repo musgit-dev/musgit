@@ -36,19 +36,18 @@ func NewPiece(name, composer string, complexity PieceComplexity) *Piece {
 	}
 }
 
-func (p *Piece) currentPractice() (*Practice, error) {
-	if len(p.Practices) == 0 {
-		return NewPractice(p.ID), errors.New("No practices")
+func (p *Piece) isCurrentlyPracticed() bool {
+	if len(p.Practices) > 0 && p.Practices[len(p.Practices)-1].Active() {
+		return true
 	}
-	pr := p.Practices[len(p.Practices)-1]
-	return pr, nil
+	return false
 }
 
-func (p *Piece) StartPractice() (*Practice, error) {
-	pr, err := p.currentPractice()
-	if err == nil && pr.Active() {
-		return pr, errors.New("You have an active practices.")
+func (p *Piece) StartPractice(lessonId int64) (*Practice, error) {
+	if p.isCurrentlyPracticed() {
+		return nil, errors.New("You have an active practice.")
 	}
+	pr := NewPractice(p.ID, lessonId)
 	p.Practices = append(p.Practices, pr)
 	return pr, nil
 }
@@ -56,13 +55,10 @@ func (p *Piece) StartPractice() (*Practice, error) {
 func (p *Piece) StopPractice(
 	evaluation PracticeProgressEvalutation,
 ) (*Practice, error) {
-	pr, err := p.currentPractice()
-	if err != nil {
-		return pr, err
+	if !p.isCurrentlyPracticed() {
+		return nil, errors.New("You don't have an active practice.")
 	}
-	if pr.Completed() {
-		return pr, errors.New("Practice has already been completed.")
-	}
-	err = pr.Complete(evaluation)
+	pr := p.Practices[len(p.Practices)-1]
+	err := pr.Complete(evaluation)
 	return pr, err
 }
