@@ -26,6 +26,7 @@ type Piece struct {
 	PieceComplexity models.PieceComplexity
 	State           models.PieceState
 	Practices       []Practice
+	Users           []*User `gorm:"many2many:user_practices;"`
 }
 
 type Lesson struct {
@@ -35,6 +36,7 @@ type Lesson struct {
 	StartDate time.Time
 	EndDate   time.Time
 	Comment   string
+	UserID    uint
 }
 
 type Practice struct {
@@ -47,6 +49,7 @@ type Practice struct {
 	Piece     Piece
 	LessonID  uint
 	Lesson    Lesson
+	UserID    uint
 }
 
 type Warmup struct {
@@ -57,6 +60,16 @@ type Warmup struct {
 	State     models.WarmupState
 	LessonID  uint
 	Lesson    Lesson
+	UserID    uint
+}
+
+type User struct {
+	gorm.Model
+	ID        uint       `gorm:"primary_key"`
+	Name      string     `gorm:"primary_key"`
+	Pieces    []Piece    `gorm:"many2many:user_pieces;"`
+	Practices []Practice `gorm:"many2many:user_practices;"`
+	Warmups   []Warmup   `gorm:"many2many:user_warmups;"`
 }
 
 type Adapter struct {
@@ -71,7 +84,7 @@ func NewAdapter(dbUrl string) (*Adapter, error) {
 		return nil, fmt.Errorf("Db connection error: %v", openErr)
 	}
 	if err := db.AutoMigrate(
-		&Composer{}, &Piece{}, &Practice{}, &Lesson{}, &Warmup{},
+		&Composer{}, &Piece{}, &Practice{}, &Lesson{}, &Warmup{}, &User{},
 	); err != nil {
 		return nil, fmt.Errorf("Db migration error: %v", err)
 	}
@@ -303,4 +316,38 @@ func (a *Adapter) GetPractices() []models.Practice {
 func (a *Adapter) UpdatePractice(practice *models.Practice) error {
 	res := a.db.Save(practice)
 	return res.Error
+}
+
+func (a *Adapter) AddUser(user *models.User) (*models.User, error) {
+	userModel := User{
+		Name: user.Name,
+	}
+	res := a.db.Create(&userModel)
+	if res.Error == nil {
+		user.ID = int64(userModel.ID)
+	}
+	return user, res.Error
+}
+func (a *Adapter) GetUser(id int64) (*models.User, error) {
+	var u User
+	res := a.db.First(&u, id)
+	user := models.User{
+		ID:   int64(u.ID),
+		Name: u.Name,
+	}
+	return &user, res.Error
+}
+
+func (a *Adapter) GetUsers() ([]*models.User, error) {
+	var urs []User
+	var users []*models.User
+	a.db.Find(&urs)
+	for _, u := range urs {
+		user := models.User{
+			ID:   int64(u.ID),
+			Name: u.Name,
+		}
+		users = append(users, &user)
+	}
+	return users, nil
 }

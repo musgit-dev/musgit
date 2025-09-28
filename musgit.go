@@ -13,6 +13,7 @@ type Musgit struct {
 	Practice services.PracticeService
 	Lesson   services.LessonService
 	Piece    services.PieceService
+	User     services.UserService
 }
 
 func New(dbUri string) *Musgit {
@@ -23,10 +24,12 @@ func New(dbUri string) *Musgit {
 	practiceService := services.NewPracticeService(dbAdapter)
 	lessonService := services.NewLessonService(dbAdapter)
 	pieceService := services.NewPieceService(dbAdapter)
+	userService := services.NewUserService(dbAdapter)
 	return &Musgit{
 		db:       dbAdapter,
 		Practice: *practiceService,
 		Lesson:   *lessonService,
 		Piece:    *pieceService,
+		User:     *userService,
 	}
 }
