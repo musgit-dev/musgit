@@ -22,4 +22,8 @@ type DBPort interface {
 	AddWarmup(warmup *models.Warmup) error
 	UpdateWarmup(warmup *models.Warmup) error
 	GetActiveWarmup() (*models.Warmup, error)
+	// User
+	AddUser(user *models.User) (*models.User, error)
+	GetUser(id int64) (*models.User, error)
+	GetUsers() ([]*models.User, error)
 }
