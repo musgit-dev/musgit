@@ -6,7 +6,7 @@ import (
 
 var userService *UserService
 
-func TestAdd(t *testing.T) {
+func TestAddUser(t *testing.T) {
 	user, err := userService.Add("test_user")
 	if err != nil {
 		t.Fatal(err)
