@@ -1,45 +1,15 @@
 package services
 
 import (
-	"fmt"
-	"os"
 	"testing"
 
-	"github.com/musgit-dev/musgit/internal/adapters/db"
 	"github.com/musgit-dev/musgit/models"
 )
 
-var service *PracticeService
-
-func TestMain(m *testing.M) {
-	dbPort, err := db.NewAdapter(":memory:")
-	if err != nil {
-		os.Exit(1)
-	}
-	pieceService := NewPieceService(dbPort)
-	lessonService := NewLessonService(dbPort)
-	service = NewPracticeService(dbPort)
-	piece, err := pieceService.Add(
-		"test_piece",
-		"test_composer",
-		models.PieceComplexityEasy,
-	)
-	if err != nil {
-		os.Exit(1)
-	}
-	fmt.Printf("Added piece %d\n", piece.ID)
-	lesson, err := lessonService.Start()
-	if err != nil {
-		os.Exit(1)
-	}
-	fmt.Printf("Started lesson %d\n", lesson.ID)
-
-	exitVal := m.Run()
-	os.Exit(exitVal)
-}
+var practiceService *PracticeService
 
 func TestStart(t *testing.T) {
-	practice, err := service.Start(1, 1)
+	practice, err := practiceService.Start(1, 1)
 	if err != nil {
 		t.Fatal("Failed to start practice", err)
 	}
@@ -50,19 +20,19 @@ func TestStart(t *testing.T) {
 		t.Fatalf("Incorrect lesson id, got %d", lessonId)
 	}
 
-	_, err = service.Start(1, 2)
+	_, err = practiceService.Start(1, 2)
 	if err != models.ErrNotActiveLesson {
 		t.Fatalf("Expected error %s, got %s", models.ErrNotActiveLesson, err)
 	}
-	_, err = service.Start(1, 0)
+	_, err = practiceService.Start(1, 0)
 	if err == models.ErrNotActiveLesson {
 		t.Fatalf("Unexpected error %s", err)
 	}
 }
 
 func TestStop(t *testing.T) {
-	service.Start(1, 0)
-	practice, err := service.Stop(1)
+	practiceService.Start(1, 0)
+	practice, err := practiceService.Stop(1)
 	if err != nil {
 		t.Fatalf("Unexpected error %s", err)
 	}
@@ -74,14 +44,14 @@ func TestStop(t *testing.T) {
 			practice.Progress,
 		)
 	}
-	// _, err = service.Stop(1)
+	// _, err = practiceService.Stop(1)
 	// if err != models.ErrCompletedPractice {
 	// 	t.Fatal(err)
 	// }
 }
 
 func TestStartWarmup(t *testing.T) {
-	warmup, err := service.Warmup(1)
+	warmup, err := practiceService.Warmup(1)
 	if err != nil {
 		t.Fatal("Unknown error", err)
 	}
@@ -89,12 +59,12 @@ func TestStartWarmup(t *testing.T) {
 	if warmup.State != models.WarmupActive {
 		t.Fatal("Warmup should be active, got", warmup.State)
 	}
-	// warmup, err = service.Warmup(1)
+	// warmup, err = practiceService.Warmup(1)
 	// if err != models.ErrWarmapStarted {
 	// 	t.Fatalf("Expected error %s, got %s", models.ErrWarmapStarted, err)
 	// }
 
-	warmup, err = service.StopWarmup()
+	warmup, err = practiceService.StopWarmup()
 	if err != nil {
 		t.Fatal("Unknown error", err)
 	}

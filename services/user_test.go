@@ -1,40 +1,13 @@
 package services
 
 import (
-	"fmt"
-	"os"
 	"testing"
-
-	"github.com/musgit-dev/musgit/internal/adapters/db"
-	"github.com/musgit-dev/musgit/models"
 )
 
-var service *UserService
-var pieceService *PieceService
-
-func TestMain(m *testing.M) {
-	dbPort, err := db.NewAdapter(":memory:")
-	if err != nil {
-		os.Exit(1)
-	}
-	pieceService = NewPieceService(dbPort)
-
-	piece, err := pieceService.Add(
-		"test_piece",
-		"test_composer",
-		models.PieceComplexityUnknown,
-	)
-	if err != nil {
-		os.Exit(1)
-	}
-	fmt.Println("Added piece", piece.ID)
-	service = NewUserService(dbPort)
-	exitVal := m.Run()
-	os.Exit(exitVal)
-}
+var userService *UserService
 
 func TestAdd(t *testing.T) {
-	user, err := service.Add("test_user")
+	user, err := userService.Add("test_user")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -44,7 +17,7 @@ func TestAdd(t *testing.T) {
 }
 
 func TestAssignPiece(t *testing.T) {
-	user, err := service.Add("test_user")
+	user, err := userService.Add("test_user")
 	if err != nil {
 		t.Fatal(err)
 	}
