@@ -63,7 +63,7 @@ func (s *UserService) StartPractice(
 	}
 	piece, err := s.db.GetPiece(pieceId)
 	lesson, err := s.db.GetLesson(lessonId)
-	practice, err = piece.StartPractice()
+	practice, err = piece.StartPractice(lessonId)
 	user.PracticePiece(practice, &lesson)
 	return practice, err
 }
